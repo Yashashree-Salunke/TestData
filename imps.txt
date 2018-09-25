@@ -1,0 +1,12 @@
+baseclass.contrib.specflow.selenium.nuint
+specflow.assist.dynamix
+chromedriver
+
+
+http://localhost:50771/
+Create New
+id-UserName
+UserAge
+DepartmentId
+submit
+
