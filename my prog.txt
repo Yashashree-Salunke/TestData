@@ -1,0 +1,142 @@
+ var db = new ReqSpecContextContext();
+                foreach (var u in db.UserStories )
+                {
+                    if (u.ParentId == null && u.RootId == null)
+                    {
+                        if (u.HasChildren == true)
+                        {
+                            // string title = u.Title.Replace(" ", "");
+                            var FolderName = u.Title.Replace(" ", "_");
+                            var Folder = Directory.CreateDirectory(
+                                 Path.Combine(repo.Info.WorkingDirectory, FolderName));
+                        }
+                        else
+                        {
+                            string title = u.Title.Replace(" ", "");
+                            string fullpath = Path.Combine(repo.Info.WorkingDirectory, title + ".txt");
+                            File.WriteAllText(fullpath, u.Value);
+                            repo.Index.Add(title + ".txt");
+                            Commands.Stage(repo, fullpath);
+
+                        }
+                    }
+                    else if (u.ParentId != null && u.RootId == null)
+                    {
+                        if (u.HasChildren == true)
+                        {
+                            var FolderName = u.Title.Replace(" ", "_");
+                            var title = (from s in db.UserStories where s.Id == u.ParentId select s.Title).Single();
+                            //db.UserStories.Where(t => t.ParentId == t.Id).Select(x => x.Title).Single();
+                            var path = Path.Combine(repo.Info.WorkingDirectory, title.Replace(" ", "_"), FolderName);
+                            var Folder = Directory.CreateDirectory(path);
+                        }
+                        else
+                        {
+                            string title = u.Title.Replace(" ", "");
+                            var fpath = (from s in db.UserStories where s.Id == u.ParentId select s.ParentId).Single();
+                            if (fpath != null)
+                            {
+                                var path1 = (from s in db.UserStories where s.ParentId == fpath select s.ParentId).Single();
+                                var fpath1 = (from s in db.UserStories where s.Id == u.ParentId select s.Title).Single();
+                                var path2 = (from s in db.UserStories where s.Id == path1 select s.Title).Single();
+                                var path = Path.Combine(repo.Info.WorkingDirectory, path2.Replace(" ", "_"), fpath1, title + ".txt");
+                                //string file = Path.Combine(path, title + ".txt");
+                                File.WriteAllText(path, u.Value);
+                                string file = Path.Combine(path2.Replace(" ", "_"), fpath1, title + ".txt");
+                                repo.Index.Add(file);
+                                Commands.Stage(repo, path);
+                            }
+
+
+                        }
+                    }
+                    else if (u.ParentId != null && u.RootId == 1)
+                    {
+                        var FolderName = u.Title.Replace(" ", "_");
+                        if (u.HasChildren == true)
+                        {
+                            var path = Path.Combine(repo.Info.WorkingDirectory, "Browse_Books");
+                            var id = (from s in db.UserStories where s.Id == u.ParentId select s.ParentId).Single();
+                            var title = (from s in db.UserStories where s.Id == u.ParentId select s.Title).Single();
+                            if (id != null)
+                            {
+                                if (id == 1)
+                                {
+                                    var Fullpath = Path.Combine(path, title.Replace(" ", "_"), FolderName);
+                                    var Folder1 = Directory.CreateDirectory(Fullpath);
+                                }
+                                else
+                                {
+                                    var title1 = (from s in db.UserStories where s.Id == id select s.Title).Single();
+                                    var id1 = (from s in db.UserStories where s.Id == id select s.ParentId).Single();
+                                    if (id1 != null)
+                                    {
+                                        if (id1 == 1)
+                                        {
+                                            var Fullpath = Path.Combine(path, title1.Replace(" ", "_"), title.Replace(" ", "_"), FolderName);
+                                            var Folder1 = Directory.CreateDirectory(Fullpath);
+                                        }
+                                        else
+                                        {
+                                            var title2 = (from s in db.UserStories where s.Id == id1 select s.Title).Single();
+                                            var Fullpath = Path.Combine(path, title2.Replace(" ", "_"), title1.Replace(" ", "_"), title.Replace(" ", "_"), FolderName);
+                                            var Folder = Directory.CreateDirectory(Fullpath);
+                                        }
+
+                                    }
+                                }
+                            }
+
+                            else
+                            {
+                                var Fullpath = Path.Combine(repo.Info .WorkingDirectory , title.Replace(" ", "_"), FolderName);
+                                var Folder = Directory.CreateDirectory(Fullpath);
+                            }
+
+                            }
+                            else
+                            {
+                                var Fullpath = Path.Combine(repo.Info .WorkingDirectory , FolderName );
+                                var Folder = Directory.CreateDirectory(Fullpath);
+                            }
+
+                        }
+
+                    
+                    else
+                    {
+                        string title = u.Title.Replace(" ", "");
+                        var fpath = (from s in db.UserStories where s.Id == u.ParentId select s.ParentId).Single();
+                        if (fpath != null)
+                        {
+                            var path1 = (from s in db.UserStories where s.ParentId == fpath select s.ParentId).Single();
+                            var fpath1 = (from s in db.UserStories where s.Id == u.ParentId select s.Title).Single();
+                            var path2 = (from s in db.UserStories where s.Id == path1 select s.Title).Single();
+                            var path = Path.Combine(repo.Info.WorkingDirectory, "Browse_books", path2.Replace(" ", "_"), fpath1, title + ".txt");
+                            //string file = Path.Combine(path, title + ".txt");
+                            File.WriteAllText(path, u.Value);
+                            string file = Path.Combine("Browse_books", path2.Replace(" ", "_"), fpath1, title + ".txt");
+                            repo.Index.Add(file);
+                            Commands.Stage(repo, path);
+                        }
+                    }
+                    
+                    
+                }
+
+
+
+
+void createfolders(int f,string path)
+                        {
+                            if (id <= 0)
+                                return;
+                            for(int i=0; i<u.Id; ++i)
+                            {
+                                var dir = Path.Combine(path, i.ToString());
+                                Directory.CreateDirectory(dir);
+                                createfolders(f-1,dir);
+
+                            }
+                        }
+            
